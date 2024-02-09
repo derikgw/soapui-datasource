@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>solutions.derikwilson</groupId>
+	<artifactId>datasource</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>datasource</name>
+	<description>datasource</description>
+	<properties>
+		<java.version>16</java.version>
+	</properties>
+	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.groovy/groovy-all -->
+		<dependency>
+			<groupId>org.apache.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>4.0.18</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>4.0.18</version> <!-- Matched version from SoapUI libs -->
+		</dependency>
+
+		<!-- Apache POI (As SoapUI might not be using the latest versions, specify the versions that SoapUI is using) -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>4.1.2</version> <!-- This version should match the one from SoapUI libs -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>4.1.2</version> <!-- This version should match the one from SoapUI libs -->
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>16</source>
+					<target>16</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>addSources</goal>
+							<goal>addTestSources</goal>
+							<goal>generateStubs</goal>
+							<goal>compile</goal>
+							<goal>generateTestStubs</goal>
+							<goal>compileTests</goal>
+							<goal>removeStubs</goal>
+							<goal>removeTestStubs</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version> <!-- Use the appropriate version -->
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<configuration>
+							<target>
+								<!-- Specify the Ant copy task -->
+								<copy todir="D:\development\soapui\bin\ext">
+									<fileset dir="${project.build.directory}">
+										<include name="**/*.jar"/>
+									</fileset>
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version> <!-- Use the latest version available -->
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
+    			<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.5.1</version> <!-- Use the latest version available -->
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<createDependencyReducedPom>true</createDependencyReducedPom>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+										<exclude>META-INF/maven/**</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
